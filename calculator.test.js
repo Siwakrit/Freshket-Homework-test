@@ -92,5 +92,6 @@ describe("calculateTotal", () => {
     const expectedTotal = (2 * 50) + (1 * 90);
     expect(parseResultValue()).toBe(expectedTotal);
   });
+  
 });
 

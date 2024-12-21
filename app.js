@@ -12,6 +12,10 @@ const menuPrices = {
 // ฟังก์ชันเริ่มต้น สร้างช่องกรอกเมนูใน HTML
 function initMenu() {
     const menuContainer = document.getElementById("menu");
+    if (!menuContainer) {
+        console.error("Menu container not found");
+        return;
+    }
     for (const [menuItem, price] of Object.entries(menuPrices)) {
         menuContainer.innerHTML += `
         <div class="row">
@@ -28,7 +32,12 @@ function calculateSubtotal() {
     let bundleDiscount = 0;
 
     for (const [menuItem, price] of Object.entries(menuPrices)) {
-        const quantity = parseInt(document.getElementById(menuItem).value) || 0;
+        const inputElement = document.getElementById(menuItem);
+        if (!inputElement) {
+            console.warn(`Input element for ${menuItem} not found`);
+            continue;
+        }
+        const quantity = parseInt(inputElement.value) || 0;
         total += price * quantity;
 
         // ตรวจสอบส่วนลดแบบคู่
@@ -44,7 +53,8 @@ function calculateSubtotal() {
 // ฟังก์ชันหลักคำนวณราคาสุทธิ
 function calculateTotal() {
     const { total, bundleDiscount } = calculateSubtotal();
-    const hasMemberCard = document.getElementById("memberCard").checked;
+    const memberCardElement = document.getElementById("memberCard");
+    const hasMemberCard = memberCardElement ? memberCardElement.checked : false;
 
     // คำนวณราคาสุทธิ
     let finalTotal = total - bundleDiscount;
@@ -59,10 +69,20 @@ function calculateTotal() {
 // ฟังก์ชันแสดงผลราคาสุทธิใน DOM
 function displayResult(finalTotal) {
     const resultElement = document.getElementById("result");
+    if (!resultElement) {
+        console.error("Result element not found");
+        return;
+    }
     resultElement.innerText = `Total Price: ${finalTotal.toFixed(2)} THB`;
 }
 
 // เริ่มต้นโปรแกรม
 initMenu();
-document.getElementById("calculateButton").addEventListener("click", calculateTotal);
+const calculateButton = document.getElementById("calculateButton");
+if (calculateButton) {
+    calculateButton.addEventListener("click", calculateTotal);
+} else {
+    console.error("Calculate button not found");
+}
 
+module.exports = { initMenu, calculateSubtotal, calculateTotal };
